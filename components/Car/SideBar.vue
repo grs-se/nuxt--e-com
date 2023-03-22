@@ -14,6 +14,12 @@ const route = useRoute();
 const onChangeLocation = () => {
 	updateModal('location');
 	if (!city.value) return;
+	if (!isNaN(parseInt(city.value))) {
+		throw createError({
+			statusCode: 400,
+			message: 'Invalid city format',
+		});
+	}
 	navigateTo(`/city/${city.value}/car/${route.params.make}`);
 	city.value = '';
 };
