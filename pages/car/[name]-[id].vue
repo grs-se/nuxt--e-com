@@ -2,34 +2,38 @@
 const route = useRoute();
 const { cars } = useCars();
 const { toTitleCase } = useUtilities();
-
 useHead({
-	title: toTitleCase(route.params.name),
+  title: toTitleCase(route.params.name),
+});
+
+definePageMeta({
+  validate({ params }) {
+    const { cars } = useCars();
+    const car = cars.find((c) => c.id === parseInt(params.id));
+    if (!car) {
+      throw createError({
+        statusCode: 404,
+        message: `Car with ID of ${route.params.id} does not exist`,
+      });
+    }
+  },
 });
 
 const car = computed(() => {
-	return cars.find((c) => {
-		return c.id === parseInt(route.params.id);
-	});
+  return cars.find((c) => {
+    return c.id === parseInt(route.params.id);
+  });
 });
-
-if (!car.value) {
-	throw createError({
-		statusCode: 404,
-		message: `Car with id of ${route.params.id} does not exist`,
-	});
-}
 
 definePageMeta({
-	layout: 'custom',
+  layout: "custom",
 });
 </script>
-
 <template>
-	<div v-if="car">
-		<CarDetailHero :car="car" />
-		<CarDetailAttributes :features="car.features" />
-		<CarDetailDescription :description="car.description" />
-		<CarDetailContact />
-	</div>
+  <div>
+    <CarDetailHero :car="car" />
+    <CarDetailAttributes :features="car.features" />
+    <CarDetailDescription :description="car.description" />
+    <CarDetailContact />
+  </div>
 </template>
